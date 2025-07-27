@@ -22,6 +22,7 @@
       position: relative;
       width: 100%;
       height: 100%;
+      display: none;
     }
 
     video {
@@ -133,18 +134,91 @@
     a {
       text-decoration: none;
     }
+
+    /* Modal Styles */
+    .modal {
+      position: fixed;
+      inset: 0;
+      background-image: url('https://res.cloudinary.com/drnfet98n/image/upload/v1753659883/PRIAM_Intro_Video_1_1_hgicoz.png');
+      background-size: cover;
+      background-position: center;
+      filter: blur(0px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px 20px;
+      z-index: 999;
+      backdrop-filter: blur(10px);
+    }
+
+    .modal h2 {
+      font-size: 28px;
+      margin-bottom: 10px;
+      color: #fff;
+    }
+
+    .modal p {
+      max-width: 480px;
+      font-size: 16px;
+      margin-bottom: 30px;
+      line-height: 1.5;
+      color: #fff;
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .modal-buttons button {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: white;
+      border: 1px solid white;
+      padding: 12px 24px;
+      font-size: 16px;
+      cursor: pointer;
+      font-family: 'Optima', sans-serif;
+      transition: background-color 0.2s ease;
+    }
+
+    .modal-buttons button:hover {
+      background-color: rgba(255, 255, 255, 0.3);
+    }
+
+    #preloadVideo {
+      display: none;
+    }
   </style>
 </head>
 <body>
+
+  <!-- Sound Choice Modal -->
+  <div id="soundModal" class="modal">
+    <h2>Sound On?</h2>
+    <p>To experience the world of PRIAM as it was intended.</p>
+    <div class="modal-buttons">
+      <button id="withSound">Enter with Sound</button>
+      <button id="withoutSound">Enter Silently</button>
+    </div>
+  </div>
+
+  <!-- Preload video silently -->
+  <video id="preloadVideo" preload="auto" muted playsinline poster="https://res.cloudinary.com/drnfet98n/image/upload/v1753659883/PRIAM_Intro_Video_1_1_hgicoz.png">
+    <source src="https://res.cloudinary.com/drnfet98n/video/upload/v1753649307/PRIAM_Intro_Video_1_ticm5f.mp4" type="video/mp4" />
+  </video>
+
+  <!-- Main content -->
   <div class="video-container">
-    <video id="bgVideo" autoplay muted loop playsinline>
+    <video id="bgVideo" loop playsinline poster="https://res.cloudinary.com/drnfet98n/image/upload/v1753659883/PRIAM_Intro_Video_1_1_hgicoz.png">
       <source src="https://res.cloudinary.com/drnfet98n/video/upload/v1753649307/PRIAM_Intro_Video_1_ticm5f.mp4" type="video/mp4" />
     </video>
 
-    <!-- Enter the House button -->
     <div id="touchBtn" class="get-in-touch">Enter the House</div>
 
-    <!-- Social Icons Row with Links -->
     <div id="socialIcons" class="social-icons">
       <a href="https://in.pinterest.com/thepriam/" target="_blank" class="icon-wrapper" title="Pinterest">
         <img src="https://res.cloudinary.com/drnfet98n/image/upload/v1753652185/Pinterest_bja9nu.png" alt="Pinterest" />
@@ -163,43 +237,56 @@
       </a>
     </div>
 
-    <!-- Sound Toggle Button -->
     <div id="muteToggle" class="mute-button">
       <img id="soundIcon" src="https://res.cloudinary.com/drnfet98n/image/upload/v1753652185/Sound_ub5ii7.png" alt="Sound Toggle" />
     </div>
 
-    <!-- Copyright -->
     <div class="copyright">
       © 2025 PRIAM. All rights reserved.
     </div>
   </div>
 
   <script>
-    const video = document.getElementById('bgVideo');
-    const soundIcon = document.getElementById('soundIcon');
-    const muteToggle = document.getElementById('muteToggle');
+    const modal = document.getElementById('soundModal');
+    const withSound = document.getElementById('withSound');
+    const withoutSound = document.getElementById('withoutSound');
+    const container = document.querySelector('.video-container');
+    const preloadVideo = document.getElementById('preloadVideo');
+    const mainVideo = document.getElementById('bgVideo');
     const touchBtn = document.getElementById('touchBtn');
     const socialIcons = document.getElementById('socialIcons');
-
-    // Ensure autoplay works
-    video.muted = true;
+    const soundIcon = document.getElementById('soundIcon');
+    const muteToggle = document.getElementById('muteToggle');
 
     const soundOn = "https://res.cloudinary.com/drnfet98n/image/upload/v1753652185/Sound_ub5ii7.png";
     const soundOff = "https://res.cloudinary.com/drnfet98n/image/upload/v1753652185/Mute_hvigsr.png";
 
-    // Manual mute/unmute toggle
-    muteToggle.addEventListener('click', () => {
-      video.muted = !video.muted;
-      soundIcon.src = video.muted ? soundOff : soundOn;
+    withSound.addEventListener('click', () => {
+      mainVideo.muted = false;
+      container.style.display = 'block';
+      modal.style.display = 'none';
+      mainVideo.currentTime = preloadVideo.currentTime;
+      mainVideo.play();
+      soundIcon.src = soundOn;
     });
 
-    // Show social icons on hover, unmute video on first click
+    withoutSound.addEventListener('click', () => {
+      mainVideo.muted = true;
+      container.style.display = 'block';
+      modal.style.display = 'none';
+      mainVideo.currentTime = preloadVideo.currentTime;
+      mainVideo.play();
+      soundIcon.src = soundOff;
+    });
+
+    muteToggle.addEventListener('click', () => {
+      mainVideo.muted = !mainVideo.muted;
+      soundIcon.src = mainVideo.muted ? soundOff : soundOn;
+    });
+
     touchBtn.addEventListener('mouseenter', () => {
       touchBtn.classList.add('hidden');
       socialIcons.classList.add('visible');
-      video.muted = false;
-      soundIcon.src = soundOn;
-      video.play();
     });
 
     socialIcons.addEventListener('mouseleave', () => {
