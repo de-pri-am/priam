@@ -137,10 +137,9 @@
 </head>
 <body>
   <div class="video-container">
-    <video id="bgVideo" autoplay loop playsinline>
-    <source src="PRIAM.mp4" type="video/mp4" />
+    <video id="bgVideo" autoplay muted loop playsinline>
+      <source src="https://res.cloudinary.com/drnfet98n/video/upload/v1753649307/PRIAM_Intro_Video_1_ticm5f.mp4" type="video/mp4" />
     </video>
-
 
     <!-- Enter the House button -->
     <div id="touchBtn" class="get-in-touch">Enter the House</div>
@@ -182,19 +181,25 @@
     const touchBtn = document.getElementById('touchBtn');
     const socialIcons = document.getElementById('socialIcons');
 
-    video.muted = false;
+    // Ensure autoplay works
+    video.muted = true;
 
     const soundOn = "https://res.cloudinary.com/drnfet98n/image/upload/v1753652185/Sound_ub5ii7.png";
     const soundOff = "https://res.cloudinary.com/drnfet98n/image/upload/v1753652185/Mute_hvigsr.png";
 
+    // Manual mute/unmute toggle
     muteToggle.addEventListener('click', () => {
       video.muted = !video.muted;
       soundIcon.src = video.muted ? soundOff : soundOn;
     });
 
+    // Show social icons on hover, unmute video on first click
     touchBtn.addEventListener('mouseenter', () => {
       touchBtn.classList.add('hidden');
       socialIcons.classList.add('visible');
+      video.muted = false;
+      soundIcon.src = soundOn;
+      video.play();
     });
 
     socialIcons.addEventListener('mouseleave', () => {
